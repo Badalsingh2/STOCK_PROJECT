@@ -27,7 +27,7 @@ export default function NewsPage() {
                 }
 
                 const response = await fetch(
-                    'http://127.0.0.1:8000/trading/api/news?symbols=stocks',
+                    'https://stock-project-1.onrender.com/trading/api/news?symbols=stocks',
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,

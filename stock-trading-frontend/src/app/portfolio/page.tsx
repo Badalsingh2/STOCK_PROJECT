@@ -63,7 +63,7 @@ const Portfolio: React.FC = () => {
       const headers = token ? { Authorization: `Bearer ${token}` } : {};
       
       try {
-        const response = await axios.get("http://127.0.0.1:8000/portfolio", { headers });
+        const response = await axios.get("https://stock-project-1.onrender.com/portfolio", { headers });
         let portfolioItems: PortfolioItem[] = [];
         
         if (Array.isArray(response.data)) {
@@ -89,7 +89,7 @@ const Portfolio: React.FC = () => {
           uniqueStocks.map(async (stock) => {
             try {
               const stockDetails = await axios.get(
-                `http://127.0.0.1:8000/stocks/${stock.symbol}`,
+                `https://stock-project-1.onrender.com/stocks/${stock.symbol}`,
                 { headers }
               );
               
@@ -133,7 +133,7 @@ const Portfolio: React.FC = () => {
     queryFn: async () => {
       const token = getAuthToken();
       const headers = token ? { Authorization: `Bearer ${token}` } : {};
-      const response = await axios.get("http://127.0.0.1:8000/trading/trade/history", { headers });
+      const response = await axios.get("https://stock-project-1.onrender.com/trading/trade/history", { headers });
       return response.data.trade_history as TradeHistoryItem[];
     },
     enabled: showHistory,
@@ -145,7 +145,7 @@ const Portfolio: React.FC = () => {
       const token = getAuthToken();
       const headers = token ? { Authorization: `Bearer ${token}` } : {};
       const response = await axios.post(
-        "http://127.0.0.1:8000/trading/trade?action=sell",
+        "https://stock-project-1.onrender.com/trading/trade?action=sell",
         sellOrder,
         { headers }
       );

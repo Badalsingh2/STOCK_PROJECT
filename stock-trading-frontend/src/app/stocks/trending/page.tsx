@@ -25,7 +25,7 @@ const fetchTrendingSymbols = async (): Promise<string[]> => {
   const token = getAuthToken();
   if (!token) throw new Error("Unauthorized");
 
-  const response = await axios.get("http://127.0.0.1:8000/trading/trending", {
+  const response = await axios.get("https://stock-project-1.onrender.com/trading/trending", {
     headers: { Authorization: `Bearer ${token}` },
   });
   return response.data.trending_stocks;
@@ -34,7 +34,7 @@ const fetchTrendingSymbols = async (): Promise<string[]> => {
 const fetchStockDetails = async (symbols: string[]): Promise<Stock[]> => {
   const token = getAuthToken();
   const stockPromises = symbols.map(async (symbol) => {
-    const response = await axios.get(`http://127.0.0.1:8000/stocks/${symbol}`, {
+    const response = await axios.get(`https://stock-project-1.onrender.com/stocks/${symbol}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return {

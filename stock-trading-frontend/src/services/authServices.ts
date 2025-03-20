@@ -12,7 +12,7 @@ interface UserRegister {
   }
   
   // API base URL - replace with your actual API base URL
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://stock-project-1.onrender.com';
   
   export class AuthService {
     private static token: string | null = null;

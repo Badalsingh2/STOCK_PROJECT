@@ -56,7 +56,7 @@ export default function StockPage() {
     queryFn: async () => {
       const token = getAuthToken();
       if (!token) throw new Error("No authentication token found");
-      const response = await axios.get(`http://127.0.0.1:8000/stocks/${symbol}`, {
+      const response = await axios.get(`https://stock-project-1.onrender.com/stocks/${symbol}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       return response.data;
@@ -69,7 +69,7 @@ export default function StockPage() {
     queryFn: async () => {
       const token = getAuthToken();
       if (!token) throw new Error("No authentication token found");
-      const response = await axios.get(`http://127.0.0.1:8000/stocks/get/history?symbol=${symbol}`, {
+      const response = await axios.get(`https://stock-project-1.onrender.com/stocks/get/history?symbol=${symbol}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       return response.data.data;
@@ -81,7 +81,7 @@ export default function StockPage() {
     mutationFn: async () => {
       const token = getAuthToken();
       return axios.post(
-        `http://127.0.0.1:8000/trading/trade?action=buy`,  // ✅ Include action in the query params
+        `https://stock-project-1.onrender.com/trading/trade?action=buy`,  // ✅ Include action in the query params
         {
           symbol: symbol,
           quantity: quantity,
@@ -95,9 +95,14 @@ export default function StockPage() {
       );
     },
     onSuccess: () => {
-        toast(`Successfully purchased ${quantity} shares of ${symbol}`, { duration: 3000 }); // Toast stays for 3s
+        toast(`Successfully purchased ${quantity} shares of ${symbol}`, { 
+          duration: 3000 
+        });
         setIsBuying(false);
-        router.push("/portfolio");
+        // Wait for toast duration before redirecting
+        setTimeout(() => {
+          router.push("/portfolio");
+        }, 3000);
       },
     onError: (error) => {
       toast("Failed to purchase shares. Please try again.", {
