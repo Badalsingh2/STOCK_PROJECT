@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ArrowUpRight } from 'lucide-react';
 import Layout from '@/components/Layout';
+import Image from "next/image";
 
 interface NewsItem {
     title: string;
@@ -75,16 +76,16 @@ export default function NewsPage() {
         return (
             <Layout>
                 <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
-                <div className="max-w-7xl mx-auto text-center py-12">
-                    <div className="text-red-500 text-xl mb-4">Error: {error}</div>
-                    <button
-                        onClick={() => window.location.reload()}
-                        className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
-                    >
-                        Try Again
-                    </button>
+                    <div className="max-w-7xl mx-auto text-center py-12">
+                        <div className="text-red-500 text-xl mb-4">Error: {error}</div>
+                        <button
+                            onClick={() => window.location.reload()}
+                            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+                        >
+                            Try Again
+                        </button>
+                    </div>
                 </div>
-            </div>
             </Layout>
         );
     }
@@ -110,10 +111,11 @@ export default function NewsPage() {
                                     className="block h-full p-4"
                                 >
                                     <div className="relative h-48 w-full mb-4 rounded-lg overflow-hidden">
-                                        <img
-                                            src={article.image_url || '/placeholder-news.jpg'}
+                                        <Image
+                                            src={article.image_url || "/placeholder-news.jpg"}
                                             alt={article.title}
-                                            className="w-full h-full object-cover"
+                                            layout="fill" // Makes the image cover the div
+                                            objectFit="cover" // Ensures the image fills the div properly
                                         />
                                     </div>
 

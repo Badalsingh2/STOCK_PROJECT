@@ -1,15 +1,10 @@
-// context/AuthContext.tsx
-"use client"
-
-import AuthService from '@/services/authServices';
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-
+import AuthService from "@/services/authServices";
+import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
 interface User {
   id?: string;
   username?: string;
   email?: string;
-  // Add other user properties as needed
 }
 
 interface AuthContextType {
@@ -32,16 +27,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    // Check if user is already logged in
     const checkAuth = async () => {
       setIsLoading(true);
       try {
         if (AuthService.isAuthenticated()) {
-          const userProfile = await AuthService.getUserProfile();
-          setUser(userProfile);
+          const response = await AuthService.getUserProfile();
+          if (response.success && response.data) {
+            setUser(response.data); // Extract user data properly
+          }
         }
       } catch (error) {
-        console.error('Authentication check error:', error);
+        console.error("Authentication check error:", error);
         AuthService.logout();
       } finally {
         setIsLoading(false);
@@ -54,9 +50,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      const response = await AuthService.login({ email, password });
-      const userProfile = await AuthService.getUserProfile();
-      setUser(userProfile);
+      await AuthService.login({ email, password });
+      const response = await AuthService.getUserProfile();
+      if (response.success && response.data) {
+        setUser(response.data); // Ensure correct type assignment
+      }
     } catch (error) {
       throw error;
     } finally {
@@ -68,7 +66,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setIsLoading(true);
     try {
       await AuthService.register({ username, email, password });
-      // Automatically log in after registration
       await login(email, password);
     } catch (error) {
       throw error;
@@ -101,7 +98,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };

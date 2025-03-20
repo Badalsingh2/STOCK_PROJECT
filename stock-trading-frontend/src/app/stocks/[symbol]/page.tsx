@@ -104,7 +104,7 @@ export default function StockPage() {
           router.push("/portfolio");
         }, 3000);
       },
-    onError: (error) => {
+    onError: () => {
       toast("Failed to purchase shares. Please try again.", {
         style: { backgroundColor: "red", color: "white" },
       });

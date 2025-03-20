@@ -6,8 +6,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
 import axios from "axios";
-import { TrendingUp, TrendingDown } from "lucide-react";
-import { toast } from "sonner";
 import Layout from "@/components/Layout";
 
 interface UserData {

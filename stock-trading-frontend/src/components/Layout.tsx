@@ -28,7 +28,7 @@ export default function Layout({ children }: LayoutProps) {
     const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(true);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
     const [showSearch, setShowSearch] = useState<boolean>(false);
-    const { user, isAuthenticated, isLoading: authLoading, logout } = useAuth();
+    const { user, isAuthenticated,  logout } = useAuth();
     const router = useRouter();
     const pathname = usePathname();
 

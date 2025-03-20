@@ -1,4 +1,4 @@
-// services/authService.ts
+// services/authServices.ts
 
 interface UserRegister {
     username: string;
@@ -11,13 +11,25 @@ interface UserRegister {
     password: string;
   }
   
-  // API base URL - replace with your actual API base URL
+  // Define API response type
+  interface ApiResponse<T> {
+    success: boolean;
+    message?: string;
+    data?: T;
+  }
+  
+  // User profile response type
+  interface UserProfile {
+    id: string;
+    username: string;
+    email: string;
+  }
+  
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://stock-project-1.onrender.com';
   
   export class AuthService {
     private static token: string | null = null;
   
-    // Set token in memory and localStorage
     static setToken(token: string): void {
       this.token = token;
       if (typeof window !== 'undefined') {
@@ -25,7 +37,6 @@ interface UserRegister {
       }
     }
   
-    // Get token from memory or localStorage
     static getToken(): string | null {
       if (!this.token && typeof window !== 'undefined') {
         this.token = localStorage.getItem('token');
@@ -33,7 +44,6 @@ interface UserRegister {
       return this.token;
     }
   
-    // Remove token on logout
     static removeToken(): void {
       this.token = null;
       if (typeof window !== 'undefined') {
@@ -41,13 +51,11 @@ interface UserRegister {
       }
     }
   
-    // Check if user is authenticated
     static isAuthenticated(): boolean {
       return !!this.getToken();
     }
   
-    // Register new user
-    static async register(userData: UserRegister): Promise<any> {
+    static async register(userData: UserRegister): Promise<ApiResponse<UserProfile>> {
       try {
         const response = await fetch(`${API_BASE_URL}/users/register`, {
           method: 'POST',
@@ -62,15 +70,14 @@ interface UserRegister {
           throw new Error(errorData.detail || 'Registration failed');
         }
   
-        return await response.json();
+        return response.json();
       } catch (error) {
         console.error('Registration error:', error);
         throw error;
       }
     }
   
-    // Login user
-    static async login(credentials: UserLogin): Promise<any> {
+    static async login(credentials: UserLogin): Promise<ApiResponse<{ access_token: string }>> {
       try {
         const response = await fetch(`${API_BASE_URL}/users/login`, {
           method: 'POST',
@@ -85,27 +92,24 @@ interface UserRegister {
           throw new Error(errorData.detail || 'Login failed');
         }
   
-        const data = await response.json();
-        
-        // Assuming the API returns a token
+        const data: { access_token: string } = await response.json();
+  
         if (data.access_token) {
           this.setToken(data.access_token);
         }
   
-        return data;
+        return { success: true, data };
       } catch (error) {
         console.error('Login error:', error);
         throw error;
       }
     }
   
-    // Logout user
     static logout(): void {
       this.removeToken();
     }
   
-    // Get user profile
-    static async getUserProfile(): Promise<any> {
+    static async getUserProfile(): Promise<ApiResponse<UserProfile>> {
       try {
         const token = this.getToken();
         if (!token) {
@@ -115,7 +119,7 @@ interface UserRegister {
         const response = await fetch(`${API_BASE_URL}/users/user/me`, {
           method: 'GET',
           headers: {
-            'Authorization': `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         });
   
@@ -127,7 +131,8 @@ interface UserRegister {
           throw new Error('Failed to fetch user profile');
         }
   
-        return await response.json();
+        const data: UserProfile = await response.json();
+        return { success: true, data };
       } catch (error) {
         console.error('Profile fetch error:', error);
         throw error;
@@ -136,3 +141,4 @@ interface UserRegister {
   }
   
   export default AuthService;
+  

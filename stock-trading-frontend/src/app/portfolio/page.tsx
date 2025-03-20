@@ -56,7 +56,7 @@ const Portfolio: React.FC = () => {
   const queryClient = useQueryClient();
   const getAuthToken = () => (typeof window !== "undefined" ? localStorage.getItem("token") : null);
 
-  const { data: portfolio, isLoading, isError } = useQuery({
+  const { data: portfolio, isLoading } = useQuery({
     queryKey: ["portfolio"],
     queryFn: async () => {
       const token = getAuthToken();
@@ -297,7 +297,7 @@ const Portfolio: React.FC = () => {
         ) : portfolio?.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-64">
             <h1 className="text-2xl font-bold mb-4">Your portfolio is empty</h1>
-            <p>You don't have any stocks in your portfolio yet.</p>
+            <p>You don&apos;t have any stocks in your portfolio yet.</p>
           </div>
         ) : (
           <div className="rounded-xl border bg-card/50 backdrop-blur-sm shadow-sm overflow-hidden">
