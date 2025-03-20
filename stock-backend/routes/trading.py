@@ -50,15 +50,23 @@ async def trade_stock(stock: StockRequest, action: str = Query(..., description=
                     "$set": {
                         "portfolio": {
                             "$cond": [
-                                {"$in": [stock.symbol, "$portfolio.symbol"]},
+                                {
+                                    "$in": [
+                                        stock.symbol,
+                                        {"$ifNull": ["$portfolio.symbol", []]}  # Ensure it's an array
+                                    ]
+                                },
                                 {
                                     "$map": {
-                                        "input": "$portfolio",
+                                        "input": {"$ifNull": ["$portfolio", []]},  # Ensure portfolio is an array
                                         "as": "item",
                                         "in": {
                                             "$cond": [
                                                 {"$eq": ["$$item.symbol", stock.symbol]},
-                                                {"symbol": "$$item.symbol", "quantity": {"$add": ["$$item.quantity", stock.quantity]}},
+                                                {
+                                                    "symbol": "$$item.symbol",
+                                                    "quantity": {"$add": ["$$item.quantity", stock.quantity]}
+                                                },
                                                 "$$item"
                                             ]
                                         }
@@ -66,7 +74,7 @@ async def trade_stock(stock: StockRequest, action: str = Query(..., description=
                                 },
                                 {
                                     "$concatArrays": [
-                                        "$portfolio",
+                                        {"$ifNull": ["$portfolio", []]},  # Ensure portfolio is an array
                                         [{"symbol": stock.symbol, "quantity": stock.quantity}]
                                     ]
                                 }
@@ -76,6 +84,7 @@ async def trade_stock(stock: StockRequest, action: str = Query(..., description=
                 }
             ]
         )
+
 
         # Log trade history
         await users_collection.update_one(
