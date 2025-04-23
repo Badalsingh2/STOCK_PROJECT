@@ -5,12 +5,12 @@ applications:
       phases:
         preBuild:
           commands:
-            - npm ci
+            - npm install
         build:
           commands:
             - npm run build
       artifacts:
-        baseDirectory: .next
+        baseDirectory: out
         files:
           - '**/*'
       cache:
@@ -21,3 +21,8 @@ applications:
         headers:
           - key: 'Cache-Control'
             value: 'no-cache'
+    redirects:
+      - source: "</^[^.]+$|\\.(?!(css|js|png|jpg|jpeg|gif|svg|ico)$)([^.]+$)/>"
+        target: /index.html
+        status: 200
+        rewrite: true
