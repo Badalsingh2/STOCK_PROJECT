@@ -50,7 +50,7 @@ export default function StockPage() {
   const [isBuying, setIsBuying] = useState(false);
 
   const getAuthToken = () => (typeof window !== "undefined" ? localStorage.getItem("token") : null);
-
+    
   const { data: stockData, isLoading } = useQuery<StockData>({
     queryKey: ["stock", symbol],
     queryFn: async () => {
