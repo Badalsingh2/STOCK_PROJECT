@@ -41,6 +41,7 @@ interface PortfolioSummary {
 interface SellOrder {
   symbol: string;
   quantity: number;
+  
 }
 
 interface TradeHistoryItem {
@@ -63,7 +64,7 @@ const Portfolio: React.FC = () => {
       const headers = token ? { Authorization: `Bearer ${token}` } : {};
       
       try {
-        const response = await axios.get("https://stock-project-1.onrender.com/portfolio", { headers });
+        const response = await axios.get("http://18.207.244.118:8000/portfolio", { headers });
         let portfolioItems: PortfolioItem[] = [];
         
         if (Array.isArray(response.data)) {
@@ -89,7 +90,7 @@ const Portfolio: React.FC = () => {
           uniqueStocks.map(async (stock) => {
             try {
               const stockDetails = await axios.get(
-                `https://stock-project-1.onrender.com/stocks/${stock.symbol}`,
+                `http://18.207.244.118:8000/stocks/${stock.symbol}`,
                 { headers }
               );
               
@@ -133,7 +134,7 @@ const Portfolio: React.FC = () => {
     queryFn: async () => {
       const token = getAuthToken();
       const headers = token ? { Authorization: `Bearer ${token}` } : {};
-      const response = await axios.get("https://stock-project-1.onrender.com/trading/trade/history", { headers });
+      const response = await axios.get("http://18.207.244.118:8000/trading/trade/history", { headers });
       return response.data.trade_history as TradeHistoryItem[];
     },
     enabled: showHistory,
@@ -145,22 +146,41 @@ const Portfolio: React.FC = () => {
       const token = getAuthToken();
       const headers = token ? { Authorization: `Bearer ${token}` } : {};
       const response = await axios.post(
-        "https://stock-project-1.onrender.com/trading/trade?action=sell",
+        "http://18.207.244.118:8000/trading/trade?action=sell",
         sellOrder,
         { headers }
       );
       return response.data;
     },
-    onSuccess: () => {
+    onSuccess: async (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ["portfolio"] });
       toast.success("Stock sold successfully");
       setSellOrders({});
+  
+      try {
+        await axios.post(
+          "https://0i4nvvnu41.execute-api.us-east-1.amazonaws.com/sell",
+          {
+            symbol: variables.symbol,
+            action: "sell",
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        console.log("Sell notification sent successfully");
+      } catch (err) {
+        console.error("Error sending sell notification:", err);
+      }
     },
     onError: (error) => {
       console.error("Error selling stock:", error);
       toast.error("Failed to sell stock. Please try again.");
     },
   });
+  
 
   const handleQuantityChange = (symbol: string, value: string) => {
     const quantity = parseInt(value, 10); // Added radix parameter
@@ -197,7 +217,7 @@ const Portfolio: React.FC = () => {
       return;
     }
     
-    sellStockMutation.mutate({ symbol, quantity });
+    sellStockMutation.mutate({ symbol, quantity});
   };
 
   const calculateSummary = (stocks: StockData[]): PortfolioSummary => {

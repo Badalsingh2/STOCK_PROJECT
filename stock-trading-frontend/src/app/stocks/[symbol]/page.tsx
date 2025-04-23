@@ -56,7 +56,7 @@ export default function StockPage() {
     queryFn: async () => {
       const token = getAuthToken();
       if (!token) throw new Error("No authentication token found");
-      const response = await axios.get(`https://stock-project-1.onrender.com/stocks/${symbol}`, {
+      const response = await axios.get(`http://18.207.244.118:8000/stocks/${symbol}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       return response.data;
@@ -69,7 +69,7 @@ export default function StockPage() {
     queryFn: async () => {
       const token = getAuthToken();
       if (!token) throw new Error("No authentication token found");
-      const response = await axios.get(`https://stock-project-1.onrender.com/stocks/get/history?symbol=${symbol}`, {
+      const response = await axios.get(`http://18.207.244.118:8000/stocks/get/history?symbol=${symbol}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       return response.data.data;
@@ -80,8 +80,8 @@ export default function StockPage() {
   const buyMutation = useMutation({
     mutationFn: async () => {
       const token = getAuthToken();
-      return axios.post(
-        `https://stock-project-1.onrender.com/trading/trade?action=buy`,  // ✅ Include action in the query params
+      const response = await axios.post(
+        `http://18.207.244.118:8000/trading/trade?action=buy`,
         {
           symbol: symbol,
           quantity: quantity,
@@ -93,17 +93,38 @@ export default function StockPage() {
           },
         }
       );
+      return response.data;
     },
-    onSuccess: () => {
-        toast(`Successfully purchased ${quantity} shares of ${symbol}`, { 
-          duration: 3000 
-        });
-        setIsBuying(false);
-        // Wait for toast duration before redirecting
-        setTimeout(() => {
-          router.push("/portfolio");
-        }, 3000);
-      },
+    onSuccess: async () => {
+      toast.success(`Successfully purchased ${quantity} shares of ${symbol}`, {
+        duration: 3000,
+      });
+      setIsBuying(false);
+  
+      try {
+        await axios.post(
+          "https://0i4nvvnu41.execute-api.us-east-1.amazonaws.com/buy", // ✅ make sure this endpoint exists
+          {
+            symbol: symbol,
+            quantity: String(quantity),
+            action: "buy",
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        console.log("Buy notification sent successfully");
+      } catch (err) {
+        console.error("Error sending buy notification:", err);
+      }
+  
+      // Wait for toast duration before redirecting
+      setTimeout(() => {
+        router.push("/portfolio");
+      }, 3000);
+    },
     onError: () => {
       toast("Failed to purchase shares. Please try again.", {
         style: { backgroundColor: "red", color: "white" },
@@ -111,6 +132,7 @@ export default function StockPage() {
       setIsBuying(false);
     },
   });
+  
   
   
 

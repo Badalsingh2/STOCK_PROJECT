@@ -33,7 +33,7 @@ export default function SettingsPage() {
     queryFn: async () => {
       const token = getAuthToken();
       if (!token) throw new Error("Not authenticated");
-      const response = await axios.get("https://stock-project-1.onrender.com/users/user/me", {
+      const response = await axios.get("http://18.207.244.118:8000/users/user/me", {
         headers: { Authorization: `Bearer ${token}` },
       });
       return response.data;
