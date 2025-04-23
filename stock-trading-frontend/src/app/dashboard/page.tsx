@@ -43,7 +43,7 @@ export default function Home() {
     const wsRef = useRef<WebSocket | null>(null);
 
     useEffect(() => {
-        wsRef.current = new WebSocket("ws://18.207.244.118:8000/ws");
+        wsRef.current = new WebSocket("wss://stock-project-1.onrender.com/ws");
 
         wsRef.current.onopen = () => {
             setIsConnected(true);

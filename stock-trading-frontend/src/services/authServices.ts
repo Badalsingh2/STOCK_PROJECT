@@ -25,7 +25,7 @@ interface UserRegister {
     email: string;
   }
   
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://18.207.244.118:8000';
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://stock-project-1.onrender.com';
   
   export class AuthService {
     private static token: string | null = null;

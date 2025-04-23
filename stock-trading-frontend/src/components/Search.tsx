@@ -39,7 +39,7 @@ export default function Search() {
     if (isAuthenticated && debouncedQuery.length > 1) {
       setIsLoading(true);
       axios
-        .get(`http://18.207.244.118:8000/stocks/get/search?query=${encodeURIComponent(debouncedQuery)}`)
+        .get(`https://stock-project-1.onrender.com/stocks/get/search?query=${encodeURIComponent(debouncedQuery)}`)
         .then((response) => {
           setResults(response.data.results || []);
         })
